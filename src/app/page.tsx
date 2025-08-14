@@ -75,7 +75,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen p-6 sm:p-10 max-w-6xl mx-auto">
-      <h1 className="text-2xl sm:text-3xl font-semibold mb-6">YouTube Growth Calculator</h1>
+      <h1 className="text-2xl sm:text-3xl font-semibold mb-6">PRJCT ZENITH GROWTH CALCULATOR</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <section className="rounded-lg border border-white/15 p-5 bg-white/5">
@@ -182,15 +182,26 @@ function LabeledSlider(props: { label: string; value: number; onChange: (v: numb
         <span className="text-sm text-white/80">{props.label}</span>
         {props.help ? <span className="text-xs text-white/50">{props.help}</span> : null}
       </div>
-      <input
-        type="range"
-        min={props.min}
-        max={props.max}
-        step={props.step}
-        value={props.value}
-        onChange={(e) => props.onChange(Number(e.target.value))}
-        className="w-full"
-      />
+      {(() => {
+        const percent = Math.max(0, Math.min(100, ((props.value - props.min) / (props.max - props.min)) * 100));
+        return (
+          <input
+            type="range"
+            min={props.min}
+            max={props.max}
+            step={props.step}
+            value={props.value}
+            onChange={(e) => props.onChange(Number(e.target.value))}
+            className="w-full h-2 rounded-full appearance-none"
+            style={{
+              backgroundColor: "rgba(255,255,255,0.12)",
+              backgroundImage: "linear-gradient(to right, #f97316, #fb923c)",
+              backgroundRepeat: "no-repeat",
+              backgroundSize: `${percent}% 100%`,
+            }}
+          />
+        );
+      })()}
     </div>
   );
 }
