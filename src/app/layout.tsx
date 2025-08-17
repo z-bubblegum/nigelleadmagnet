@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,9 +14,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "YouTube Growth Calculator",
+  title: "PRJCT ZENITH GROWTH CALCULATOR",
   description:
-    "Lead magnet calculator for online fitness coaching businesses to project revenue from YouTube content.",
+    "Project your client growth and revenue from YouTube for online fitness coaching offers.",
+  openGraph: {
+    title: "PRJCT ZENITH GROWTH CALCULATOR",
+    description:
+      "Project your client growth and revenue from YouTube for online fitness coaching offers.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -29,6 +36,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+        <Analytics />
       </body>
     </html>
   );

@@ -234,12 +234,7 @@ function EmailCapture() {
   const [email, setEmail] = useState("");
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    const endpoint = process.env.NEXT_PUBLIC_EMAIL_ENDPOINT || "";
-    if (!endpoint) {
-      alert("Email capture endpoint not configured yet. Add NEXT_PUBLIC_EMAIL_ENDPOINT to connect your ESP.");
-      return;
-    }
-    fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) })
+    fetch("/api/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) })
       .then(() => alert("Thanks! Check your inbox."))
       .catch(() => alert("Something went wrong. Please try again."));
   };
