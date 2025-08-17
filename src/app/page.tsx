@@ -7,19 +7,22 @@ type CalculatorState = {
   pricePerClient: number;
   videosPerMonth: number;
   avgViewsPerVideo: number;
-  viewToCallRatePct: number; // 0-100 UI, stored as percent
+  viewToBookingRatePct: number; // 0.1-5 UI, stored as percent
+  showRatePct: number; // 0-100 UI, stored as percent
   closeRatePct: number; // 0-100 UI, stored as percent
 };
 
 function computeProjection(s: CalculatorState) {
-  const viewToCallRate = s.viewToCallRatePct / 100;
+  const viewToBookingRate = s.viewToBookingRatePct / 100;
+  const showRate = s.showRatePct / 100;
   const closeRate = s.closeRatePct / 100;
   const clientsNeeded = Math.ceil(
     s.targetMonthlyRevenue / Math.max(1, s.pricePerClient)
   );
   const monthlyReach = s.videosPerMonth * s.avgViewsPerVideo;
-  const callsPerMonth = monthlyReach * viewToCallRate;
-  const newClientsPerMonth = callsPerMonth * closeRate;
+  const bookingsPerMonth = monthlyReach * viewToBookingRate;
+  const showsPerMonth = bookingsPerMonth * showRate;
+  const newClientsPerMonth = showsPerMonth * closeRate;
   const newMRR = newClientsPerMonth * s.pricePerClient;
   const monthsToGoal = newClientsPerMonth > 0
     ? Math.ceil(clientsNeeded / newClientsPerMonth)
@@ -27,7 +30,8 @@ function computeProjection(s: CalculatorState) {
   return {
     clientsNeeded,
     monthlyReach,
-    callsPerMonth,
+    bookingsPerMonth,
+    showsPerMonth,
     newClientsPerMonth,
     newMRR,
     monthsToGoal,
@@ -61,7 +65,8 @@ export default function Home() {
       pricePerClient: numberFromQuery(q, "pricePerClient", 2000),
       videosPerMonth: numberFromQuery(q, "videosPerMonth", 12),
       avgViewsPerVideo: numberFromQuery(q, "avgViewsPerVideo", 1500),
-      viewToCallRatePct: numberFromQuery(q, "viewToCallRatePct", 2),
+      viewToBookingRatePct: numberFromQuery(q, "viewToBookingRatePct", 2),
+      showRatePct: numberFromQuery(q, "showRatePct", 70),
       closeRatePct: numberFromQuery(q, "closeRatePct", 25),
     };
   });
@@ -121,13 +126,21 @@ export default function Home() {
         <section className="rounded-lg border border-white/15 p-5 bg-white/5">
           <h2 className="text-lg font-medium mb-4">Conversion</h2>
           <LabeledSlider
-            label={`View → Call Rate (${formatPct(state.viewToCallRatePct)})`}
-            value={state.viewToCallRatePct}
-            onChange={(v) => setState((s) => ({ ...s, viewToCallRatePct: v }))}
-            min={0}
-            max={100}
+            label={`View → Booking Rate (${formatPct(state.viewToBookingRatePct)})`}
+            value={state.viewToBookingRatePct}
+            onChange={(v) => setState((s) => ({ ...s, viewToBookingRatePct: v }))}
+            min={0.1}
+            max={5}
             step={0.1}
             help="Benchmark: 1–5%"
+          />
+          <LabeledSlider
+            label={`Sales Call Show Rate (${formatPct(state.showRatePct)})`}
+            value={state.showRatePct}
+            onChange={(v) => setState((s) => ({ ...s, showRatePct: v }))}
+            min={0}
+            max={100}
+            step={0.5}
           />
           <LabeledSlider
             label={`Sales Call Close Rate (${formatPct(state.closeRatePct)})`}
@@ -143,7 +156,8 @@ export default function Home() {
         <section className="rounded-lg border border-white/15 p-5 bg-white/5">
           <h2 className="text-lg font-medium mb-4">Projection</h2>
           <div className="grid grid-cols-2 gap-3 text-sm">
-            <Metric label="Calls/Month" value={formatInt(result.callsPerMonth)} />
+            <Metric label="Bookings/Month" value={formatInt(result.bookingsPerMonth)} />
+            <Metric label="Shows/Month" value={formatInt(result.showsPerMonth)} />
             <Metric label="New Clients/Month" value={formatInt(result.newClientsPerMonth)} />
             <Metric label="New MRR" value={formatUsd(result.newMRR)} />
             <Metric label="Months to Goal" value={result.monthsToGoal === Infinity ? "—" : formatInt(result.monthsToGoal)} />
