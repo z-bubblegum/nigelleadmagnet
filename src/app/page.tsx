@@ -7,17 +7,19 @@ type CalculatorState = {
   pricePerClient: number;
   videosPerMonth: number;
   avgViewsPerVideo: number;
-  viewToCallRate: number; // 0.03 = 3%
-  closeRate: number; // 0.25 = 25%
+  viewToCallRatePct: number; // 0-100 UI, stored as percent
+  closeRatePct: number; // 0-100 UI, stored as percent
 };
 
 function computeProjection(s: CalculatorState) {
+  const viewToCallRate = s.viewToCallRatePct / 100;
+  const closeRate = s.closeRatePct / 100;
   const clientsNeeded = Math.ceil(
     s.targetMonthlyRevenue / Math.max(1, s.pricePerClient)
   );
   const monthlyReach = s.videosPerMonth * s.avgViewsPerVideo;
-  const callsPerMonth = monthlyReach * s.viewToCallRate;
-  const newClientsPerMonth = callsPerMonth * s.closeRate;
+  const callsPerMonth = monthlyReach * viewToCallRate;
+  const newClientsPerMonth = callsPerMonth * closeRate;
   const newMRR = newClientsPerMonth * s.pricePerClient;
   const monthsToGoal = newClientsPerMonth > 0
     ? Math.ceil(clientsNeeded / newClientsPerMonth)
@@ -48,7 +50,7 @@ function formatUsd(n: number) {
 }
 
 function formatPct(n: number) {
-  return `${Math.round(n * 100)}%`;
+  return `${Math.round(n)}%`;
 }
 
 export default function Home() {
@@ -59,8 +61,8 @@ export default function Home() {
       pricePerClient: numberFromQuery(q, "pricePerClient", 2000),
       videosPerMonth: numberFromQuery(q, "videosPerMonth", 12),
       avgViewsPerVideo: numberFromQuery(q, "avgViewsPerVideo", 1500),
-      viewToCallRate: numberFromQuery(q, "viewToCallRate", 0.02),
-      closeRate: numberFromQuery(q, "closeRate", 0.25),
+      viewToCallRatePct: numberFromQuery(q, "viewToCallRatePct", 2),
+      closeRatePct: numberFromQuery(q, "closeRatePct", 25),
     };
   });
 
@@ -119,21 +121,21 @@ export default function Home() {
         <section className="rounded-lg border border-white/15 p-5 bg-white/5">
           <h2 className="text-lg font-medium mb-4">Conversion</h2>
           <LabeledSlider
-            label={`View → Call Rate (${formatPct(state.viewToCallRate)})`}
-            value={state.viewToCallRate}
-            onChange={(v) => setState((s) => ({ ...s, viewToCallRate: v }))}
-            min={0.005}
-            max={0.05}
-            step={0.001}
+            label={`View → Call Rate (${formatPct(state.viewToCallRatePct)})`}
+            value={state.viewToCallRatePct}
+            onChange={(v) => setState((s) => ({ ...s, viewToCallRatePct: v }))}
+            min={0}
+            max={100}
+            step={0.1}
             help="Benchmark: 1–5%"
           />
           <LabeledSlider
-            label={`Sales Call Close Rate (${formatPct(state.closeRate)})`}
-            value={state.closeRate}
-            onChange={(v) => setState((s) => ({ ...s, closeRate: v }))}
-            min={0.15}
-            max={0.5}
-            step={0.005}
+            label={`Sales Call Close Rate (${formatPct(state.closeRatePct)})`}
+            value={state.closeRatePct}
+            onChange={(v) => setState((s) => ({ ...s, closeRatePct: v }))}
+            min={0}
+            max={100}
+            step={0.5}
             help="Benchmark: 20–40%"
           />
         </section>
@@ -192,7 +194,7 @@ function LabeledSlider(props: { label: string; value: number; onChange: (v: numb
             step={props.step}
             value={props.value}
             onChange={(e) => props.onChange(Number(e.target.value))}
-            className="w-full h-2 rounded-full appearance-none"
+            className="w-full h-2 rounded-full appearance-none slider-orange"
             style={{
               backgroundColor: "rgba(255,255,255,0.12)",
               backgroundImage: "linear-gradient(to right, #f97316, #fb923c)",
