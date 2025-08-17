@@ -57,6 +57,10 @@ function formatPct(n: number) {
   return `${Math.round(n)}%`;
 }
 
+function formatPct1(n: number) {
+  return `${n.toFixed(1)}%`;
+}
+
 export default function Home() {
   const [state, setState] = useState<CalculatorState>(() => {
     const q = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
@@ -126,7 +130,7 @@ export default function Home() {
         <section className="rounded-lg border border-white/15 p-5 bg-white/5">
           <h2 className="text-lg font-medium mb-4">Conversion</h2>
           <LabeledSlider
-            label={`View → Booking Rate (${formatPct(state.viewToBookingRatePct)})`}
+            label={`View → Booking Rate (${formatPct1(state.viewToBookingRatePct)})`}
             value={state.viewToBookingRatePct}
             onChange={(v) => setState((s) => ({ ...s, viewToBookingRatePct: v }))}
             min={0.1}
@@ -141,6 +145,7 @@ export default function Home() {
             min={0}
             max={100}
             step={0.5}
+            help="Benchmark: 60–80%"
           />
           <LabeledSlider
             label={`Sales Call Close Rate (${formatPct(state.closeRatePct)})`}
