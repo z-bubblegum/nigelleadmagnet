@@ -69,12 +69,12 @@ export default function Home() {
     const q = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
     return {
       targetMonthlyRevenue: numberFromQuery(q, "targetMonthlyRevenue", 50000),
-      pricePerClient: numberFromQuery(q, "pricePerClient", 2000),
+      pricePerClient: numberFromQuery(q, "pricePerClient", 500),
       videosPerMonth: numberFromQuery(q, "videosPerMonth", 12),
-      avgViewsPerVideo: numberFromQuery(q, "avgViewsPerVideo", 1500),
+      avgViewsPerVideo: numberFromQuery(q, "avgViewsPerVideo", 1000),
       viewToBookingRatePct: numberFromQuery(q, "viewToBookingRatePct", 0.8),
-      showRatePct: numberFromQuery(q, "showRatePct", 70),
-      closeRatePct: numberFromQuery(q, "closeRatePct", 25),
+      showRatePct: numberFromQuery(q, "showRatePct", 60),
+      closeRatePct: numberFromQuery(q, "closeRatePct", 40),
     };
   });
 
