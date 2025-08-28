@@ -176,7 +176,7 @@ export default function Home() {
 
       <div className="mt-8 rounded-lg border border-white/15 p-5 bg-white/5">
         <h3 className="font-medium mb-2">Get the full YouTube-to-Revenue Playbook</h3>
-        <p className="text-sm text-white/70 mb-3">Enter your email to get our best practices for fitness coaching offers, will only be sharing future resources here</p>
+        <p className="text-sm text-white/70 mb-3">Enter your email to get our best practices for faith driven fitness coaching offers, will only be sharing future resources here</p>
         <ConvertKitForm />
       </div>
     </div>
